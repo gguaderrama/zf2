@@ -1,0 +1,121 @@
+<?php
+$title = 'Administrador de usuarios';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
+<table class="table table-bordered table-striped table-hover">
+    <tr>
+        <th>id</th>
+        <th>title</th>
+        <th><artist></artist></th>
+        <th></th>
+    </tr>
+    <?php foreach ($crud as $crud) : ?>
+        <tr>
+            <td><?php echo $this->escapeHtml($crud->id); ?></td>
+            <td><?php echo $this->escapeHtml($crud->artist); ?></td>
+            <td><?php echo $this->escapeHtml($crud->title); ?></td>
+            <td>
+                <button type="button"  data-id="<?php echo $this->escapeHtml($crud->id); ?>" class="btn btn-info editar" data-toggle="modal" data-target="#myModal" >
+                    <span class="glyphicon glyphicon-pencil"></span>&nbsp;
+                    Editar&nbsp;</span></button>
+
+                <a class="btn btn-danger eliminar" onclick="eliminar(<?php echo $this->escapeHtml($crud->id); ?>)"
+                <span class="glyphicon glyphicon-trash"></span>&nbsp;Eliminar</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    <tr>
+        <td colspan="4">
+            <button type="button" class="btn btn-success pull-right" data-toggle="modal" data-target="#myModal">  <span class="glyphicon glyphicon-plus-sign"></span>&nbsp;
+                Add new User&nbsp;<span class="glyphicon glyphicon-user"></span></button>
+        </td>
+    </tr>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form">
+                    <input type="hidden" name="id" class="id" id="id">
+                    <div class="form-group">
+                        <label for="ejemplo_email_1">Artist</label>
+                        <input type="text" class="form-control" id="artist"
+                               placeholder="Introduce el titulo " name="artist">
+                    </div>
+                    <div class="form-group">
+                        <label for="ejemplo_password_1">Title</label>
+                        <input type="text" class="form-control" id="title"
+                               placeholder="Titulo" name="title">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default send" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary saveInfo" onclick="send()">Guardar Cambios</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+    $( document ).ready(function() {
+          $('.editar').on('click', function(){
+              var myvalue = $(this).data('id');
+              $(".modal-body #id").val(myvalue);
+           });
+        $('.eliminar').on('click', function(){
+            var myvalue = $(this).data('id');
+            $(".modal-body #id").val(myvalue);
+        });
+        $('#myModal').on('shown.bs.modal', function(e) {
+            $( ".saveInfo" ).prop( "disabled", false );
+
+        });
+    });
+    function send(){
+        FormValue = $("form").serialize();
+        $.ajax({
+            async: true,
+            type: "POST",
+            data:  FormValue,
+            url: "<?=$this->basePath("crud/insertAjax")?>",
+            success: function(datos){
+                console.log(datos);
+                console.log('ejecuto correctamente');
+                //window.location.href("/");
+                window.location = "/crud";
+            }
+        });
+        return false;
+    }
+
+
+    function eliminar(id){
+        $.ajax({
+            async: true,
+            type: "POST",
+            data:  {id : id},
+            url: "<?=$this->basePath("crud/deleteAjax?")?>"+ id,
+            success: function(datos){
+                console.log(datos);
+                console.log('ejecuto correctamente');
+                //window.location.href("/");
+                window.location = "/crud";
+            }
+        });
+        return false;
+    }
+</script>
+
+
